@@ -19,6 +19,8 @@ public class ConnectionDataBase {
         try {
             Class.forName(driver);
             connection = DriverManager.getConnection(url, user, password);
+            if (connection != null) {
+            }
         } catch (ClassNotFoundException ex) {
             System.out.println("Error de driver:; " + ex.getMessage());
         } catch (SQLException ex) {
@@ -33,8 +35,9 @@ public class ConnectionDataBase {
     public void Disconnect() {
         try {
             connection.close();
+            System.out.println("coneccion finalizada.");
         } catch (SQLException ex) {
-            System.out.println("Error al cerrar: " + ex.getMessage());
+            System.out.println("Error al desconectar: " + ex.getMessage());
         }
     }
 }

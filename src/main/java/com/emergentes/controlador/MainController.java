@@ -1,7 +1,14 @@
 package com.emergentes.controlador;
 
+import com.emergentes.model.Libro;
+import com.emergentes.utils.ConnectionDataBase;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,27 +21,89 @@ public class MainController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Iniciando proceso");
-        String option = (request.getParameter("option") != null) ? request.getParameter("option") : "list";
-        System.out.println("Opcion escogida: " + option);
-        
-        if (option.equals("new")) {
-            // operaciones para nuevo
-        }
-        if (option.equals("edit")) {
+        try {
+            String option = request.getParameter("option");
+            option = option != null ? option : "list";
             
-        }
-        if (option.equals("delete")) {
+            ArrayList<Libro> libros = new ArrayList<Libro>();
+
+            ConnectionDataBase canal = new ConnectionDataBase();
+            Connection connection = canal.Connect();
+            PreparedStatement ps;
+            ResultSet rs;
+
+            if (option.equals("list")) {
+                String sql = "select * from libros;";
+
+                ps = connection.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    Libro libro = new Libro();
+                    libro.setId(rs.getInt("id"));
+                    libro.setNombre(rs.getString("nombre"));
+                    libro.setCategoria(rs.getString("categoria"));
+                    libro.setIsbn(rs.getInt("isbn"));
+
+                    libros.add(libro);
+                }
+                request.setAttribute("libros", libros);
+                request.getRequestDispatcher("lista.jsp").forward(request, response);
+            }
             
-        }
-        if (option.equals("list")) {
-            response.sendRedirect("lista.jsp");
+            if (option.equals("edit")) {
+                System.out.println("Editar");
+            }
+            
+            if (option.equals("borrar")) {
+                int id = Integer.parseInt((String) request.getParameter("id"));
+                String sql = "delete from libros where id = " + id + ";";
+
+                ps = connection.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                request.getRequestDispatcher("MainController?option=list").forward(request, response);
+                //request.getRequestDispatcher("eliminar.jsp").forward(request, response);
+            }
+            
+            connection.close();
+            canal.Disconnect();
+            
+        } catch (Exception e) {
+            System.out.println("Error en doGET()");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            ConnectionDataBase canal = new ConnectionDataBase();
+            Connection connection = canal.Connect();
+            PreparedStatement ps;
+            ResultSet rs;
+
+            String option = (String) request.getParameter("option");
+            System.out.println("optionssss: " + option);
+
+            if (option.equals("new")) {
+                String nombre = (String) request.getParameter("nombre");
+                String categoria = (String) request.getParameter("categoria");
+                String isbn = (String) request.getParameter("isbn");
+                System.out.println("Nombre: " + nombre);
+                String sql = "insert into libros(nombre, categoria, isbn) values('" + nombre + "','" + categoria + "'," + isbn + ");";
+                ps = connection.prepareStatement(sql);
+                int value = ps.executeUpdate(sql);
+                response.sendRedirect("MainController");
+            }
+            
+            connection.close();
+            canal.Disconnect();
+            
+        } catch (Exception e) {
+            System.out.println("Error: DoPost");
+        }
+
     }
 
 }
