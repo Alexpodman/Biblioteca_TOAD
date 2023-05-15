@@ -117,21 +117,28 @@ public class MainController extends HttpServlet {
                 String nombre = (String) request.getParameter("nombre");
                 String categoria = (String) request.getParameter("categoria");
                 String isbn = (String) request.getParameter("isbn");
-                System.out.println("Nombre: " + nombre);
                 String sql = "insert into libros(nombre, categoria, isbn) values('" + nombre + "','" + categoria + "'," + isbn + ");";
                 ps = connection.prepareStatement(sql);
                 int filasAfectadas = ps.executeUpdate(sql);
                 System.out.println("Filas afectadas: " + filasAfectadas);
                 response.sendRedirect("MainController");
             }
-            
+
             if (option.equals("edit")) {
-                String id = (String)request.getParameter("id");
+                String id = (String) request.getParameter("id");
                 String nombre = (String) request.getParameter("nombre");
                 String categoria = (String) request.getParameter("categoria");
                 String isbn = (String) request.getParameter("isbn");
-                System.out.println("Nombre: " + nombre);
-                String sql = "update libros set nombre = '"+nombre+"', categoria = '"+categoria+"', isbn = "+isbn+" where id = "+id+";";
+                String sql = "update libros set nombre = '" + nombre + "', categoria = '" + categoria + "', isbn = " + isbn + " where id = " + id + ";";
+                ps = connection.prepareStatement(sql);
+                int filasAfectadas = ps.executeUpdate(sql);
+                System.out.println("Filas afectadas: " + filasAfectadas);
+                response.sendRedirect("MainController");
+            }
+
+            if (option.equals("borrar")) {
+                String id = (String) request.getParameter("id");
+                String sql = "delete from libros where id = " + id + ";";
                 System.out.println("sql: " + sql);
                 ps = connection.prepareStatement(sql);
                 int filasAfectadas = ps.executeUpdate(sql);
