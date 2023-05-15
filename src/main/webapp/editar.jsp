@@ -15,6 +15,7 @@
         </header>
         <main>
             <form method="post" action="MainController">
+                <input type="hidden" name="option" value="edit">
                 <table>
                     <tr>
                         <td>Id:</td>
@@ -32,11 +33,9 @@
                         <td>ISBN:</td>
                         <td><input type="text" name="isbn" value="<%= libro.getIsbn() %>"></td>
                     </tr>
-                    <tr>
-                        <td><input type="hidden" name="option" value="edit"></td>
-                        <td><input type="submit" value="Guardar"></td>
-                    </tr>
                 </table>
+                    <input type="submit" value="Guardar">
+                    <a href="MainController">Cancelar</a>
             </form>
         </main>
     </body>

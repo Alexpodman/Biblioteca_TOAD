@@ -3,12 +3,10 @@ package com.emergentes.controlador;
 import com.emergentes.model.Libro;
 import com.emergentes.utils.ConnectionDataBase;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +30,9 @@ public class MainController extends HttpServlet {
             PreparedStatement ps;
             ResultSet rs;
 
+            if (option.equals("new")) {
+                request.getRequestDispatcher("agregar.jsp").forward(request, response);
+            }
             if (option.equals("list")) {
                 String sql = "select * from libros;";
 

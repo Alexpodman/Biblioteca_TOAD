@@ -17,8 +17,10 @@
         <main>
             <div>
                 <h2>Libros encontrados</h2>
-                <button onclick="window.location.href='agregar.jsp'">Agregar</button>
-                <br><br>
+                <form method="get" action="MainController">
+                    <input type="hidden" name="option" value="new">
+                    <input type="submit" value="Nuevo">
+                </form>
                 <table border="1" cellspacing="0">
                     <tr>
                         <th>Id</th>
