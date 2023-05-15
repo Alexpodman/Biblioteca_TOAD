@@ -8,7 +8,7 @@
 <html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Biblioteca TOAD</title>
     </head>
     <body>
         <header>
@@ -34,10 +34,18 @@
                         <td><%= li.getCategoria() %></td>
                         <td><%= li.getIsbn() %></td>
                         <td>
-                            <button onclick="window.location.href='editar.jsp?id=<%= li.getId() %>'">Editar</button>
+                            <form method="get" action="MainController">
+                                <input type="hidden" name="option" value="edit">
+                                <input type="hidden" name="id" value="<%= li.getId() %>">
+                                <input type="submit" value="Editar">
+                            </form>
                         </td>
                         <td>
-                            <button onclick="window.location.href='eliminar.jsp?id=<%= li.getId() %>'">Elimiar</button>
+                            <form method="get" action="MainController">
+                                <input type="hidden" name="option" value="borrar">
+                                <input type="hidden" name="id" value="<%= li.getId() %>">
+                                <input type="submit" value="Eliminar">
+                            </form>
                         </td>
                     </tr>
                     <% } %>

@@ -24,7 +24,7 @@ public class MainController extends HttpServlet {
         try {
             String option = request.getParameter("option");
             option = option != null ? option : "list";
-            
+
             ArrayList<Libro> libros = new ArrayList<Libro>();
 
             ConnectionDataBase canal = new ConnectionDataBase();
@@ -50,25 +50,52 @@ public class MainController extends HttpServlet {
                 request.setAttribute("libros", libros);
                 request.getRequestDispatcher("lista.jsp").forward(request, response);
             }
-            
+
             if (option.equals("edit")) {
-                System.out.println("Editar");
-            }
-            
-            if (option.equals("borrar")) {
                 int id = Integer.parseInt((String) request.getParameter("id"));
-                String sql = "delete from libros where id = " + id + ";";
+                String sql = "select * from libros;";
+                Libro libro = new Libro();
 
                 ps = connection.prepareStatement(sql);
                 rs = ps.executeQuery();
 
-                request.getRequestDispatcher("MainController?option=list").forward(request, response);
-                //request.getRequestDispatcher("eliminar.jsp").forward(request, response);
+                while (rs.next()) {
+                    if (id == rs.getInt("id")) {
+                        libro.setId(rs.getInt("id"));
+                        libro.setNombre(rs.getString("nombre"));
+                        libro.setCategoria(rs.getString("categoria"));
+                        libro.setIsbn(rs.getInt("isbn"));
+                    }
+                }
+
+                request.setAttribute("libro", libro);
+                request.getRequestDispatcher("editar.jsp").forward(request, response);
             }
-            
+
+            if (option.equals("borrar")) {
+                int id = Integer.parseInt((String) request.getParameter("id"));
+                String sql = "select * from libros;";
+                Libro libro = new Libro();
+
+                ps = connection.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    if (id == rs.getInt("id")) {
+                        libro.setId(rs.getInt("id"));
+                        libro.setNombre(rs.getString("nombre"));
+                        libro.setCategoria(rs.getString("categoria"));
+                        libro.setIsbn(rs.getInt("isbn"));
+                    }
+                }
+
+                request.setAttribute("libro", libro);
+                request.getRequestDispatcher("eliminar.jsp").forward(request, response);
+            }
+
             connection.close();
             canal.Disconnect();
-            
+
         } catch (Exception e) {
             System.out.println("Error en doGET()");
         }
@@ -93,13 +120,28 @@ public class MainController extends HttpServlet {
                 System.out.println("Nombre: " + nombre);
                 String sql = "insert into libros(nombre, categoria, isbn) values('" + nombre + "','" + categoria + "'," + isbn + ");";
                 ps = connection.prepareStatement(sql);
-                int value = ps.executeUpdate(sql);
+                int filasAfectadas = ps.executeUpdate(sql);
+                System.out.println("Filas afectadas: " + filasAfectadas);
                 response.sendRedirect("MainController");
             }
             
+            if (option.equals("edit")) {
+                String id = (String)request.getParameter("id");
+                String nombre = (String) request.getParameter("nombre");
+                String categoria = (String) request.getParameter("categoria");
+                String isbn = (String) request.getParameter("isbn");
+                System.out.println("Nombre: " + nombre);
+                String sql = "update libros set nombre = '"+nombre+"', categoria = '"+categoria+"', isbn = "+isbn+" where id = "+id+";";
+                System.out.println("sql: " + sql);
+                ps = connection.prepareStatement(sql);
+                int filasAfectadas = ps.executeUpdate(sql);
+                System.out.println("Filas afectadas: " + filasAfectadas);
+                response.sendRedirect("MainController");
+            }
+
             connection.close();
             canal.Disconnect();
-            
+
         } catch (Exception e) {
             System.out.println("Error: DoPost");
         }
